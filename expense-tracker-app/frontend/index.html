@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">go</div>
+                <div>
+                    <p class="brand-title">go</p>
+                    <p class="brand-subtitle">Expense Tracker</p>
+                </div>
+            </div>
+            <nav class="nav-list">
+                <a class="nav-link active" href="#" data-page="dashboard">Dashboard</a>
+                <a class="nav-link" href="#" data-page="sales">Sales</a>
+                <a class="nav-link" href="#" data-page="purchases">Purchases</a>
+                <div class="nav-section">Organization</div>
+                <a class="nav-link" href="#" data-page="reports">Reports</a>
+                <a class="nav-link" href="#" data-page="payroll">Payroll</a>
+                <a class="nav-link" href="#" data-page="tax">Tax</a>
+            </nav>
+            <div class="nav-footer">
+                <a class="nav-link" href="#" data-page="settings">Settings</a>
+                <a class="nav-link" href="#" data-page="help">Help</a>
+            </div>
+        </aside>
+
+        <main class="main-panel">
+            <header class="page-topbar">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="search" id="searchInput" placeholder="Search anything ...">
+                </div>
+                <div class="user-panel">
+                    <div class="profile-pill">
+                        <span>LZ</span>
+                        <div>
+                            <span>Laiba Zahid</span>
+                            <small>Super Admin</small>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="page-header">
+                <div>
+                    <p class="subtitle" id="pageSubtitle">Purchases Summary</p>
+                    <h1 id="pageTitle">Purchase Bills</h1>
+                </div>
+                <div class="page-actions">
+                    <button class="secondary-btn" id="exportBtn">Export</button>
+                    <button class="secondary-btn" id="addVendorBtn">Add Vendor</button>
+                    <button class="primary-btn" id="openExpenseModalBtn">Add Expense</button>
+                </div>
+            </section>
+
+            <section id="dashboardPage" class="page-section">
+                <section class="summary-grid">
+                    <article class="summary-card wide-card">
+                        <span>Total Expenses (This Month)</span>
+                        <h2 id="monthTotal">PKR 0</h2>
+                    </article>
+                    <article class="summary-card wide-card soft-card">
+                        <span>Total Expenses</span>
+                        <h2 id="overallTotal">PKR 0</h2>
+                    </article>
+                </section>
+
+                <section class="stats-grid">
+                    <article class="stat-card">
+                        <span>Paid Bills</span>
+                        <h3 id="paidCount">0</h3>
+                    </article>
+                    <article class="stat-card">
+                        <span>Pending Bills</span>
+                        <h3 id="pendingCount">0</h3>
+                    </article>
+                    <article class="stat-card">
+                        <span>Upcoming Payments</span>
+                        <h3 id="upcomingAmount">PKR 0</h3>
+                    </article>
+                    <article class="stat-card">
+                        <span>New Vendors</span>
+                        <h3 id="vendorCount">0</h3>
+                    </article>
+                </section>
+
+                <section class="category-row">
+                    <div class="category-pill">
+                        <span>Marketing</span>
+                        <strong id="marketingTotal">PKR 0</strong>
+                    </div>
+                    <div class="category-pill">
+                        <span>Software</span>
+                        <strong id="softwareTotal">PKR 0</strong>
+                    </div>
+                    <div class="category-pill">
+                        <span>Office</span>
+                        <strong id="officeTotal">PKR 0</strong>
+                    </div>
+                    <div class="category-pill">
+                        <span>Hosting</span>
+                        <strong id="hostingTotal">PKR 0</strong>
+                    </div>
+                </section>
+            </section>
+
+            <section id="purchasesPage" class="page-section hidden">
+                <section class="filter-row">
+                    <div class="filter-group">
+                        <label for="vendorFilter">All Clients</label>
+                        <select id="vendorFilter">
+                            <option value="all">All Clients</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="periodFilter">This Month</label>
+                        <select id="periodFilter">
+                            <option value="this-month">This Month</option>
+                            <option value="last-month">Last Month</option>
+                            <option value="all-time">All Time</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="table-card">
+                    <div class="table-header">
+                        <div>
+                            <h2>Track every bill and payment for the selected period.</h2>
+                        </div>
+                        <button class="secondary-btn" id="refreshBtn">Refresh</button>
+                    </div>
+
+                    <div class="table-scroll">
+                        <table class="expense-table">
+                            <thead>
+                                <tr>
+                                    <th>Vendor Company Name</th>
+                                    <th>Bill ID</th>
+                                    <th>Vendor Name</th>
+                                    <th>Service</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenseTableBody">
+                            </tbody>
+                        </table>
+                        <div id="emptyState" class="empty-state">No expense bills found for the selected filter.</div>
+                    </div>
+                </section>
+            </section>
+
+            <section id="salesPage" class="page-section hidden">
+                <section class="summary-grid">
+                    <article class="summary-card wide-card">
+                        <span>Total Paid</span>
+                        <h2 id="salesPaidTotal">PKR 0</h2>
+                    </article>
+                    <article class="summary-card wide-card soft-card">
+                        <span>Total Pending</span>
+                        <h2 id="salesPendingTotal">PKR 0</h2>
+                    </article>
+                </section>
+                <section class="stats-grid">
+                    <article class="stat-card">
+                        <span>Active Vendors</span>
+                        <h3 id="salesVendorCount">0</h3>
+                    </article>
+                    <article class="stat-card">
+                        <span>Upcoming Payments</span>
+                        <h3 id="salesUpcomingTotal">PKR 0</h3>
+                    </article>
+                </section>
+            </section>
+
+            <section id="reportsPage" class="page-section hidden">
+                <section class="summary-grid">
+                    <article class="summary-card wide-card">
+                        <span>Total Expenses</span>
+                        <h2 id="reportsTotalExpenses">PKR 0</h2>
+                    </article>
+                    <article class="summary-card wide-card soft-card">
+                        <span>Total Bills</span>
+                        <h2 id="reportsBillCount">0</h2>
+                    </article>
+                </section>
+                <section class="stats-grid">
+                    <article class="stat-card">
+                        <span>Unique Vendors</span>
+                        <h3 id="reportsVendorsCount">0</h3>
+                    </article>
+                    <article class="stat-card">
+                        <span>Export Ready</span>
+                        <h3>Yes</h3>
+                    </article>
+                </section>
+            </section>
+
+            <section id="payrollPage" class="page-section hidden">
+                <section class="summary-grid">
+                    <article class="summary-card wide-card">
+                        <span>Payroll Period</span>
+                        <h2>Monthly</h2>
+                    </article>
+                    <article class="summary-card wide-card soft-card">
+                        <span>Staff Count</span>
+                        <h2>12</h2>
+                    </article>
+                </section>
+                <section class="stats-grid">
+                    <article class="stat-card">
+                        <span>Next Payday</span>
+                        <h3>1st of next month</h3>
+                    </article>
+                    <article class="stat-card">
+                        <span>Estimated Payroll</span>
+                        <h3>PKR 0</h3>
+                    </article>
+                </section>
+            </section>
+
+            <section id="taxPage" class="page-section hidden">
+                <section class="summary-grid">
+                    <article class="summary-card wide-card">
+                        <span>Estimated Tax Due</span>
+                        <h2 id="taxDue">PKR 0</h2>
+                    </article>
+                    <article class="summary-card wide-card soft-card">
+                        <span>Tax Rate</span>
+                        <h2 id="taxRate">5%</h2>
+                    </article>
+                </section>
+                <div class="placeholder-card">
+                    <h2>Tax Tracking</h2>
+                    <p id="taxMessage">Tax calculation is based on your total reported expenses. Update expenses to
+                        refine the estimate.</p>
+                </div>
+            </section>
+
+            <section id="settingsPage" class="page-section hidden">
+                <div class="settings-card">
+                    <div class="section-heading">
+                        <h2>Settings</h2>
+
+                    </div>
+                    <div class="settings-form">
+                        <label>
+                            Full Name
+                            <input type="text" id="settingsName" placeholder="Laiba Zahid" />
+                        </label>
+                        <label>
+                            Email Address
+                            <input type="email" id="settingsEmail" placeholder="laiba@example.com" />
+                        </label>
+                        <label>
+                            Default Currency
+                            <select id="settingsCurrency">
+                                <option value="PKR">PKR</option>
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </label>
+                        <label>
+                            App Theme
+                            <select id="settingsTheme">
+                                <option value="light">Light</option>
+                                <option value="dark">Dark</option>
+                            </select>
+                        </label>
+                        <div class="modal-actions">
+                            <button class="primary-btn" id="saveSettingsBtn">Save Settings</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="helpPage" class="page-section hidden">
+                <div class="help-card">
+
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <button class="faq-question">How do I add a new expense?</button>
+                            <div class="faq-answer">Click Add Expense, fill in the vendor, amount, date, and status,
+                                then Save Expense.</div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question">How do I delete a bill?</button>
+                            <div class="faq-answer">Open the Purchases page and click Delete next to the bill you want
+                                to remove.</div>
+                        </div>
+                        <div class="faq-item">
+                            <button class="faq-question">Can I export my expenses?</button>
+                            <div class="faq-answer">Yes, click the Export button on the Dashboard or Purchases pages to
+                                download a CSV file.</div>
+                        </div>
+                    </div>
+                    <div class="support-card">
+                        <h3>Contact Support</h3>
+                        <p>If you still need help, email <a href="mailto:support@example.com">support@example.com</a> or
+                            call +92 300 0000000.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="toast" id="errorMessage"></div>
+    <div class="loading-overlay" id="loadingSpinner">Loading…</div>
+
+    <div class="modal" id="expenseModal">
+        <div class="modal-panel">
+            <div class="modal-top">
+                <div>
+                    <h2>Add Expense</h2>
+                    <p>Enter expense details and save to your dashboard.</p>
+                </div>
+                <button class="close-btn" id="closeExpenseModal">×</button>
+            </div>
+            <div class="modal-grid">
+                <label>
+                    Vendor Company
+                    <input list="vendorCompanies" id="expenseVendorCompany" placeholder="Google Ads" />
+                    <datalist id="vendorCompanies"></datalist>
+                </label>
+                <label>
+                    Vendor Name
+                    <input type="text" id="expenseVendorName" placeholder="Robert Fox" />
+                </label>
+                <label>
+                    Service
+                    <input type="text" id="expenseService" placeholder="Freelancing" />
+                </label>
+                <label>
+                    Category
+                    <select id="expenseCategory">
+                        <option value="Marketing">Marketing</option>
+                        <option value="Software">Software</option>
+                        <option value="Office">Office</option>
+                        <option value="Hosting">Hosting</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </label>
+                <label>
+                    Amount
+                    <input type="number" id="expenseAmount" placeholder="15000" />
+                </label>
+                <label>
+                    Date
+                    <input type="date" id="expenseDate" />
+                </label>
+                <label>
+                    Status
+                    <select id="expenseStatus">
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Overdue">Overdue</option>
+                    </select>
+                </label>
+                <label class="full-width">
+                    Description
+                    <input type="text" id="expenseDescription" placeholder="Optional note or purpose" />
+                </label>
+            </div>
+            <div class="modal-actions">
+                <button class="secondary-btn" id="cancelExpense">Cancel</button>
+                <button class="primary-btn" id="saveExpenseBtn">Save Expense</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="vendorModal">
+        <div class="modal-panel small-panel">
+            <div class="modal-top">
+                <div>
+                    <h2>Add Vendor</h2>
+                    <p>Add a vendor company name to the expense form suggestions.</p>
+                </div>
+                <button class="close-btn" id="closeVendorModal">×</button>
+            </div>
+            <label>
+                Vendor Company Name
+                <input type="text" id="newVendorName" placeholder="Flywheel Studio" />
+            </label>
+            <div class="modal-actions">
+                <button class="secondary-btn" id="cancelVendor">Cancel</button>
+                <button class="primary-btn" id="saveVendorBtn">Save Vendor</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
